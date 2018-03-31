@@ -25,6 +25,6 @@ app.get('*',(req,res) => {
     res.sendfile(path.join(__dirname + '/client/dist/index.html'));
 });
 
-app.listen(8000,() => {
+app.listen( process.env.PORT || 3000,() => {
     console.log("local host 8000");
 });
