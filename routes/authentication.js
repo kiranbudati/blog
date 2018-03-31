@@ -1,6 +1,17 @@
 const User = require('../models/user');
 const express = require('express');
 const router = express.Router();
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+
+var transporter = nodemailer.createTransport(smtpTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'kiranreddy1284@gmail.com',
+    pass: '9010898679'
+  }
+}));
 
 router.post('/register', (req, res) => {
     if(!req.body.email){
@@ -30,7 +41,21 @@ router.post('/register', (req, res) => {
                         }
                     }
                     else{
-                        res.json({success: true, message: 'user saved'});
+                        var mailOptions = {
+                            from: 'kiranreddy1284@gmail.com',
+                            to: req.body.email,
+                            subject: 'Sending Email using Node.js[nodemailer]',
+                            text: 'That was easy!'
+                          };
+                          
+                          transporter.sendMail(mailOptions, function(error, info){
+                            if (error) {
+                              console.log(error);
+                            } else {
+                              console.log('Email sent: ' + info.response);
+                            }
+                          });  
+                        res.json({success: true, message: 'user saved',});
                     }
                 });
             }   
