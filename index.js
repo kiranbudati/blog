@@ -21,9 +21,9 @@ app.use(bodyParser.json());
 
 app.use('/authentication',authentication);
 
-app.use(express.static(__dirname + '/client/dist/'));
+app.use(express.static(__dirname + '/blog/dist/'));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/dist/index.html'));
+  res.sendFile(path.join(__dirname + '/blog/dist/index.html'));
 });
 app.listen( process.env.PORT || 3000,() => {
     console.log("local host 8000");
