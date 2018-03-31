@@ -430,7 +430,8 @@ var AuthService = /** @class */ (function () {
     }
     AuthService.prototype.register = function (user) {
         console.log(user);
-        return this.http.post('https://kiran-blog.herokuapp.com/authentication/register', user);
+        return this.http.post('http://localhost:3000/authentication/register', user);
+        // return this.http.post('https://kiran-blog.herokuapp.com/authentication/register', user);
     };
     AuthService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Injectable */])(),

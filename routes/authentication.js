@@ -42,12 +42,11 @@ router.post('/register', (req, res) => {
                     }
                     else{
                         var mailOptions = {
-                            from: 'kiranreddy1284@gmail.com',
+                            from: 'Kirans blog',
                             to: req.body.email,
                             subject: 'Sending Email using Node.js[nodemailer]',
                             text: 'That was easy!'
                           };
-                          
                           transporter.sendMail(mailOptions, function(error, info){
                             if (error) {
                               console.log(error);
@@ -55,7 +54,8 @@ router.post('/register', (req, res) => {
                               console.log('Email sent: ' + info.response);
                             }
                           });  
-                        res.json({success: true, message: 'user saved',});
+                          console.log('sda');
+                        res.json({success: true, message: 'user saved kiran dha'});
                     }
                 });
             }   

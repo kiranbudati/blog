@@ -10,6 +10,7 @@ export class AuthService {
 
   register(user) {
     console.log(user);
-    return this.http.post('https://kiran-blog.herokuapp.com/authentication/register', user);
+    return this.http.post('http://localhost:3000/authentication/register', user);
+    // return this.http.post('https://kiran-blog.herokuapp.com/authentication/register', user);
   }
 }
