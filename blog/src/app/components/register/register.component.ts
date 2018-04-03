@@ -8,8 +8,10 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
+  message: any = [];
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
+    this.message = [];
     this.registerForm = this.fb.group({
       email: ['', Validators.compose([
         Validators.required,
@@ -32,13 +34,14 @@ export class RegisterComponent implements OnInit {
         Validators.maxLength(30),
       ])],
     });
-   }
-   registerUser() {
-  this.authService.register(this.registerForm.value).subscribe((res => {
-       console.log(res);
-     }));
+  }
+  registerUser() {
+    this.authService.register(this.registerForm.value).subscribe((res => {
+      this.message = res;
+      console.log(this.message);
+    }));
 
-   }
+  }
   ngOnInit() {
   }
 

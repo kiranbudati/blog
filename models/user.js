@@ -6,7 +6,9 @@ mongoose.Promise =global.Promise;
 const userSchema = new Schema({
     email: {type: String, required: true,},
     username: {type: String, required: true,},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    token:{type: String},
+    verified: {type: Boolean}
 });
 
 userSchema.pre('save',function(next){
@@ -22,7 +24,7 @@ userSchema.pre('save',function(next){
     }
 });
 
-userSchema.methods.comparePassword = (password) => {
+userSchema.methods.comparePassword = function(password) {
     return bcrypt.compareSync(password,this.password);
 }
 module.exports = mongoose.model('User', userSchema);

@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
+      <h1 class="page-header">Login</h1>
+      <div class="alert alert-success" *ngIf="message.success">
+          <strong>Success!</strong> {{message.message}} Please verify email to continue.
+        </div>
+        <div class="alert alert-warning" *ngIf="message.success === false">
+            <strong>Warning!</strong> {{message.message}}
+          </div>
+      <form [formGroup]="loginForm" (submit)="loginUser()">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <div [ngClass]="{'has-error': (loginForm.controls.email.errors && loginForm.controls.email.dirty),'has-success':!loginForm.controls.email.errors}">
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" formControlName="email">
+            <ul class="help-block">
+              <li *ngIf="loginForm.controls.email.errors?.required && loginForm.controls.email.dirty">This field is required</li>
+            </ul>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div [ngClass]="{'has-error': (loginForm.controls.password.errors && loginForm.controls.password.dirty),'has-success':!loginForm.controls.password.errors}">
+            <input type="password" class="form-control" id="password" placeholder="Password" formControlName="password">
+            <ul class="help-block">
+              <li *ngIf="loginForm.controls.password.errors?.required && loginForm.controls.password.dirty">This field is required</li>
+            </ul>
+          </div>
+        </div>
+        <input type="submit" [disabled]="!loginForm.valid" class="btn btn-primary" value="Submit">
+      </form>
+    </div>
+  </div>

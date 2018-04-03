@@ -1,66 +1,144 @@
 const User = require('../models/user');
 const express = require('express');
 const router = express.Router();
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+const jwt = require('jsonwebtoken');
+const config = require('../config/database');
 
-var transporter = nodemailer.createTransport(smtpTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  auth: {
-    user: 'kiranreddy1284@gmail.com',
-    pass: '9010898679'
-  }
-}));
+rand = makeid();
 
-router.post('/register', (req, res) => {
-    if(!req.body.email){
-        res.json({success: false, message: 'email required'});
+const transporter = nodemailer.createTransport(smtpTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    auth: {
+        user: 'kiranreddy1284@gmail.com',
+        pass: '9010898679'
     }
-    else{
-        if(!req.body.username){
-            res.json({success: false, message: 'password required'});
+}));
+router.post('/login', (req, res) => {
+    var email = req.body.email;
+    var password = req.body.password;
+
+    User.findOne({ email: email }, function (err, users) {
+        if (err) return next(err);
+        if (users) {
+            if (users.verified) {
+                var validPassword = users.comparePassword(req.body.password);
+                if (!validPassword) {
+                    res.json({ success: false, message: 'Inavalid Password.' });
+                }
+                else {
+                    var token = jwt.sign({ userId: users._id }, config.secret, { expiresIn: '24h' })
+                    res.json({ success: true, message: 'logged in.', token: token, user: { username: users.username,userId: users._id } });
+                }
+            }
+            else {
+                res.json({ success: true, message: 'Please verify email to continue.' });
+            }
+        }
+        else {
+            res.json({ success: false, message: 'User not found.' });
+        }
+    });
+});
+router.post('/register', (req, res) => {
+    let user = new User({
+        email: req.body.email.toLowerCase(),
+        username: req.body.username,
+        password: req.body.password,
+        verified: false,
+        token: rand
+    });
+    User.findOne({ email: req.body.email }, function (err, users) {
+        if (err) return next(err);
+        if (!users) {
+            user.save((err) => {
+                host = req.get('host');
+                link = "http://" + req.get('host') + "/authentication/verify?token=" + rand + "&email=" + req.body.email;
+                var mailOptions = {
+                    from: 'Kirans blog',
+                    to: req.body.email,
+                    subject: "Please confirm your Email account",
+                    html: "Click to Verify : <br>" + link
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+                res.json({ success: true, message: 'Registered Successfully' });
+            });
+        }
+        else {
+            res.json({ success: false, message: 'Email already exists' });
+        }
+    });
+});
+router.get('/verify', (req, res) => {
+    User.findOne({ email: req.query.email }, function (err, users) {
+        if (err) return next(err);
+        if (users) {
+            if (users.token === req.query.token) {
+                User.update({ email: req.query.email }, { $set: { verified: true } }, function (err, result) {
+                    res.json({ success: true, message: "Email was verified successfully" });
+                });
+            }
+            else {
+                res.json({ success: false, message: "Token miss match" });
+            }
+        }
+        else {
+            res.json({ success: false, message: "Email not found" });
+        }
+    });
+    // res.send("Params:" + JSON.stringify(req.query));
+    // console.log(req.query)
+});
+const decoded = null;
+router.use((req,res,next)=>{
+   const token =  req.headers['authorization'];
+   if(!token){
+    res.json({ success: false, message: "No token provided" });
+   }
+   else{
+       jwt.verify(token,config.secret,(err,decoded)=>{
+           if(err){
+            res.json({ success: false, message: "Token invalid" });
+           }
+           else{
+               req.decoded = decoded;
+               next();
+           }
+       });
+   }
+});
+
+router.get('/profile',(req,res) =>{
+    User.findOne({_id: req.decoded.userId}).select('username email').exec((err,usr)=>{
+        if(err){
+            res.json({success: false, message: err});
         }
         else{
-            if(!req.body.password){
-                res.json({success: false, message: 'password required'});
+            if(!usr){
+                res.json({ success: false, message: "User not found" });
             }
             else{
-                let user = new User({
-                    email: req.body.email.toLowerCase(),
-                    username: req.body.username,
-                    password: req.body.password
-                });
-                user.save((err) => {
-                    if(err){
-                        if(err.code === 11000){
-                            res.json({success: false, message: 'username or email already exists'})                            
-                        } 
-                        else{
-                            res.json({success: false, message: 'user not saved',err})
-                        }
-                    }
-                    else{
-                        var mailOptions = {
-                            from: 'Kirans blog',
-                            to: req.body.email,
-                            subject: 'Sending Email using Node.js[nodemailer]',
-                            text: 'That was easy!'
-                          };
-                          transporter.sendMail(mailOptions, function(error, info){
-                            if (error) {
-                              console.log(error);
-                            } else {
-                              console.log('Email sent: ' + info.response);
-                            }
-                          });  
-                          console.log('sda');
-                        res.json({success: true, message: 'user saved kiran dha'});
-                    }
-                });
-            }   
+                res.json({ success: true, user: usr });
+            }
         }
-    }
+    });
 });
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 25; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 module.exports = router;

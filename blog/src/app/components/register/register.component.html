@@ -1,42 +1,54 @@
-<h1 class="page-header">Register</h1>
+<div class="row">
+  <div class="col-md-6">
 
-<form [formGroup]="registerForm" (submit)="registerUser()">
-  <div class="form-group">
-    <label for="username">Username</label>
-    <div [ngClass]="{'has-error': (registerForm.controls.username.errors && registerForm.controls.username.dirty),'has-success':!registerForm.controls.username.errors}">
-      <input type="text" class="form-control" id="username" placeholder="Username" formControlName="username">
-      <ul class="help-block">
-          <li *ngIf="registerForm.controls.username.errors?.required && registerForm.controls.username.dirty">This field is required</li>
-          <li *ngIf="registerForm.controls.username.errors?.minLength || registerForm.controls.username.errors?.maxLength">Min: 5 Max: 30</li>
-        </ul>
-    </div>
   </div>
-  <div class="form-group">
-    <label for="email">Email address</label>
-    <div [ngClass]="{'has-error': (registerForm.controls.email.errors && registerForm.controls.email.dirty),'has-success':!registerForm.controls.email.errors}">
-      <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" formControlName="email">
-      <ul class="help-block">
-        <li *ngIf="registerForm.controls.email.errors?.required && registerForm.controls.email.dirty">This field is required</li>
-      </ul>
-    </div>
+  <div class="col-md-6">
+    <h1 class="page-header">Register</h1>
+    <div class="alert alert-success" *ngIf="message.success">
+        <strong>Success!</strong> {{message.message}} Please verify email to continue.
+      </div>
+      <div class="alert alert-warning" *ngIf="message.success === false">
+          <strong>Warning!</strong> {{message.message}}
+        </div>
+    <form [formGroup]="registerForm" (submit)="registerUser()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div [ngClass]="{'has-error': (registerForm.controls.username.errors && registerForm.controls.username.dirty),'has-success':!registerForm.controls.username.errors}">
+          <input type="text" class="form-control" id="username" placeholder="Username" formControlName="username">
+          <ul class="help-block">
+            <li *ngIf="registerForm.controls.username.errors?.required && registerForm.controls.username.dirty">This field is required</li>
+            <li *ngIf="registerForm.controls.username.errors?.minLength || registerForm.controls.username.errors?.maxLength">Min: 5 Max: 30</li>
+          </ul>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <div [ngClass]="{'has-error': (registerForm.controls.email.errors && registerForm.controls.email.dirty),'has-success':!registerForm.controls.email.errors}">
+          <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" formControlName="email">
+          <ul class="help-block">
+            <li *ngIf="registerForm.controls.email.errors?.required && registerForm.controls.email.dirty">This field is required</li>
+          </ul>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div [ngClass]="{'has-error': (registerForm.controls.password.errors && registerForm.controls.password.dirty),'has-success':!registerForm.controls.password.errors}">
+          <input type="password" class="form-control" id="password" placeholder="Password" formControlName="password">
+          <ul class="help-block">
+            <li *ngIf="registerForm.controls.password.errors?.required && registerForm.controls.password.dirty">This field is required</li>
+          </ul>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <div [ngClass]="{'has-error': (registerForm.controls.confirm.errors && registerForm.controls.confirm.dirty),'has-success':!registerForm.controls.confirm.errors}">
+          <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" formControlName="confirm">
+          <ul class="help-block">
+            <li *ngIf="registerForm.controls.confirm.errors?.required && registerForm.controls.confirm.dirty">This field is required</li>
+          </ul>
+        </div>
+      </div>
+      <input type="submit" [disabled]="!registerForm.valid" class="btn btn-primary" value="Submit">
+    </form>
   </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <div [ngClass]="{'has-error': (registerForm.controls.password.errors && registerForm.controls.password.dirty),'has-success':!registerForm.controls.password.errors}">
-      <input type="password" class="form-control" id="password" placeholder="Password" formControlName="password">
-      <ul class="help-block">
-          <li *ngIf="registerForm.controls.password.errors?.required && registerForm.controls.password.dirty">This field is required</li>
-        </ul>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="confirm-password">Confirm Password</label>
-    <div [ngClass]="{'has-error': (registerForm.controls.confirm.errors && registerForm.controls.confirm.dirty),'has-success':!registerForm.controls.confirm.errors}">
-      <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" formControlName="confirm">
-      <ul class="help-block">
-          <li *ngIf="registerForm.controls.confirm.errors?.required && registerForm.controls.confirm.dirty">This field is required</li>
-        </ul>
-    </div>
-  </div>
-  <input type="submit" [disabled]="!registerForm.valid" class="btn btn-primary" value="Submit">
-</form>
+</div>
